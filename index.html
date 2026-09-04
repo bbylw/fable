@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#000000">
+<title>逍遥 — 看得见风，听得见光</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&family=Inter:wght@300;400&family=Noto+Serif+SC:wght@300;400&family=Noto+Sans+SC:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --serif:'Noto Serif SC','Cormorant Garamond','Iowan Old Style',Georgia,'Songti SC',serif;
+  --sans:'Noto Sans SC','Inter',ui-sans-serif,system-ui,-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#000;color:#fff;font-family:var(--sans);font-weight:300;overflow:hidden;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+#c{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:crosshair;background:#000}
+.grain{position:fixed;inset:0;pointer-events:none;opacity:.045;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:200px 200px}
+.vignette{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.55) 100%)}
+
+.brand{position:fixed;top:1.6rem;left:2rem;display:flex;flex-direction:column;gap:.35rem;pointer-events:none;transition:opacity 1s ease;z-index:5}
+.brand-name{font-family:var(--serif);font-size:1.55rem;letter-spacing:.5em;text-shadow:0 0 24px rgba(255,255,255,.35)}
+.brand-pal{font-size:.62rem;letter-spacing:.5em;text-transform:uppercase;opacity:.6}
+
+.intro{position:fixed;inset:0;display:grid;place-content:center;text-align:center;pointer-events:none;z-index:6;padding:0 1.5rem;
+  transition:opacity 1.5s ease,transform 1.5s ease}
+.intro h1{font-family:var(--serif);font-weight:300;font-size:clamp(3.5rem,16vw,11rem);letter-spacing:.35em;text-indent:.35em;line-height:1;
+  text-shadow:0 0 50px rgba(255,255,255,.35),0 0 120px rgba(255,255,255,.15);animation:rise 2.4s var(--ease) both}
+.intro p{font-family:var(--serif);font-size:clamp(1.05rem,2.8vw,1.7rem);letter-spacing:.55em;text-indent:.55em;opacity:.85;margin-top:1.4rem;animation:rise 2.4s .35s var(--ease) both}
+.intro .hint{display:block;margin-top:3.2rem;font-size:.68rem;letter-spacing:.4em;text-indent:.4em;opacity:.65;
+  animation:rise 2.4s .7s var(--ease) both,blink 3s 3s ease-in-out infinite}
+@keyframes rise{from{opacity:0;transform:translateY(34px);filter:blur(14px)}to{opacity:1;transform:none;filter:blur(0)}}
+@keyframes blink{50%{opacity:.2}}
+.intro.gone{opacity:0;transform:scale(1.08)}
+
+.hud{position:fixed;bottom:1.4rem;left:50%;transform:translateX(-50%);z-index:5;display:flex;align-items:center;gap:1.15rem;
+  padding:.62rem 1.15rem;border-radius:999px;background:rgba(0,0,0,.38);border:1px solid rgba(255,255,255,.12);
+  backdrop-filter:blur(16px) saturate(140%);-webkit-backdrop-filter:blur(16px) saturate(140%);
+  font-size:.72rem;letter-spacing:.2em;white-space:nowrap;max-width:calc(100vw - 2rem);
+  transition:opacity .9s ease,transform .9s var(--ease)}
+.hud span{opacity:.78;display:inline-flex;align-items:center}
+.hud .sep{opacity:.25}
+.hud .hb{background:none;border:0;padding:0;color:inherit;font:inherit;letter-spacing:inherit;text-transform:inherit;opacity:.78;display:inline-flex;align-items:center;cursor:pointer;transition:opacity .3s}
+.hud .hb:hover{opacity:1}
+kbd{font:inherit;font-size:.6rem;padding:.14em .45em;border:1px solid rgba(255,255,255,.28);border-radius:5px;margin-right:.4em;background:rgba(255,255,255,.06);line-height:1.5}
+.eq{display:inline-flex;gap:2px;align-items:flex-end;height:11px;margin-right:.45em}
+.eq i{display:block;width:2px;height:100%;background:#fff;transform-origin:bottom;animation:eq .9s ease-in-out infinite alternate;border-radius:1px}
+.eq i:nth-child(2){animation-delay:-.3s}.eq i:nth-child(3){animation-delay:-.6s}
+@keyframes eq{from{transform:scaleY(.18)}to{transform:scaleY(1)}}
+.hud.muted .eq i{animation:none;transform:scaleY(.18);opacity:.45}
+body.idle .hud{opacity:0;transform:translate(-50%,14px)}
+body.idle .brand{opacity:0}
+body.hide-ui .hud,body.hide-ui .brand{opacity:0;pointer-events:none}
+@media(max-width:720px){.hud{gap:.7rem;font-size:.58rem;padding:.55rem .9rem}.hud .desk{display:none}}
+
+.toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.96);z-index:7;pointer-events:none;
+  font-family:var(--serif);font-size:clamp(2rem,6vw,4.5rem);letter-spacing:.3em;text-indent:.3em;opacity:0;
+  text-shadow:0 0 40px rgba(255,255,255,.4);transition:opacity .5s ease,transform .8s var(--ease)}
+.toast.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+
+.nogl{position:fixed;inset:0;display:grid;place-content:center;text-align:center;padding:2rem;z-index:10;
+  background:radial-gradient(ellipse at 30% 20%,#2a1b4d,transparent 60%),radial-gradient(ellipse at 70% 80%,#0d3b4f,transparent 60%),#000}
+.nogl[hidden]{display:none}
+.nogl h2{font-family:var(--serif);font-weight:300;font-size:2.4rem;margin-bottom:.6rem}
+.nogl p{opacity:.7;max-width:46ch;line-height:1.6}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="vignette" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="brand" aria-hidden="true">
+  <span class="brand-name">逍遥</span>
+  <span class="brand-pal" id="palName">长空</span>
+  <span class="brand-pal" id="musicName">♪ 逍遥游</span>
+</header>
+
+<div class="intro" id="intro">
+  <h1>自由</h1>
+  <p>风有形 · 光有声 · 心无界</p>
+  <span class="hint">触碰任意处 御风而行</span>
+</div>
+
+<div class="hud" id="hud">
+  <button class="hb" id="btnSound" type="button"><span class="eq" aria-hidden="true"><i></i><i></i><i></i></span><kbd>M</kbd>声音</button>
+  <span class="sep">·</span>
+  <button class="hb" id="btnMusic" type="button"><kbd>N</kbd>曲风</button>
+  <span class="sep">·</span>
+  <span>拖动生风</span>
+  <span class="sep">·</span>
+  <span>轻点泛涟</span>
+  <span class="sep desk">·</span>
+  <span class="desk"><kbd>空格</kbd>迸发</span>
+  <span class="sep desk">·</span>
+  <span class="desk"><kbd>P</kbd>换色</span>
+  <span class="sep desk">·</span>
+  <span class="desk"><kbd>C</kbd>涤荡</span>
+  <span class="sep desk">·</span>
+  <span class="desk"><kbd>S</kbd>留影</span>
+  <span class="sep desk">·</span>
+  <span class="desk"><kbd>F</kbd>满屏</span>
+  <span class="sep desk">·</span>
+  <span class="desk"><kbd>H</kbd>隐身</span>
+</div>
+
+<div class="toast" id="toast" aria-live="polite"></div>
+
+<div class="nogl" id="nogl" hidden>
+  <h2>逍遥需要 WebGL 2</h2>
+  <p>这是一场在显卡上实时流动的风。请用开启了硬件加速的最新版 Chrome、Firefox、Safari 或 Edge 打开，去追逐属于你的自由。</p>
+</div>
+
+<script>
+(() => {
+'use strict';
+
+/* ============================================================
+   PALETTES
+   ============================================================ */
+const PALETTES = [
+  { name: '长空',    h0: 0.42, h1: 0.88, s: 1.00 },
+  { name: '逐火',     h0: 0.94, h1: 1.13, s: 1.00 },
+  { name: '归海',     h0: 0.47, h1: 0.66, s: 0.95 },
+  { name: '旷野',    h0: 0.72, h1: 0.98, s: 0.90 },
+  { name: '霓虹',     h0: 0.00, h1: 1.00, s: 1.00 },
+  { name: '明月', h0: 0.52, h1: 0.64, s: 0.28 },
+];
+let palIndex = 0;
+let palette = PALETTES[0];
+
+function HSVtoRGB(h, s, v) {
+  h = ((h % 1) + 1) % 1;
+  const i = Math.floor(h * 6), f = h * 6 - i;
+  const p = v * (1 - s), q = v * (1 - f * s), t = v * (1 - (1 - f) * s);
+  let r, g, b;
+  switch (i % 6) {
+    case 0: r = v; g = t; b = p; break;
+    case 1: r = q; g = v; b = p; break;
+    case 2: r = p; g = v; b = t; break;
+    case 3: r = p; g = q; b = v; break;
+    case 4: r = t; g = p; b = v; break;
+    default: r = v; g = p; b = q;
+  }
+  return { r, g, b };
+}
+function paletteColor(u, intensity = 0.15) {
+  const h = palette.h0 + (palette.h1 - palette.h0) * (((u % 1) + 1) % 1);
+  const c = HSVtoRGB(h, palette.s, 1);
+  return { r: c.r * intensity, g: c.g * intensity, b: c.b * intensity };
+}
+function randomColor(intensity) { return paletteColor(Math.random(), intensity); }
+
+/* ============================================================
+   WEBGL SETUP
+   ============================================================ */
+const canvas = document.getElementById('c');
+const gl = canvas.getContext('webgl2', { alpha: false, depth: false, stencil: false, antialias: false, preserveDrawingBuffer: false, powerPreference: 'high-performance' });
+
+if (!gl) { document.getElementById('nogl').hidden = false; return; }
+
+const extFloat = gl.getExtension('EXT_color_buffer_float');
+const extHalf = extFloat ? null : gl.getExtension('EXT_color_buffer_half_float');
+if (!extFloat && !extHalf) { document.getElementById('nogl').hidden = false; return; }
+gl.getExtension('OES_texture_float_linear');
+
+const HALF = gl.HALF_FLOAT;
+function renderable(internalFormat, format) {
+  const tex = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, tex);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+  gl.texImage2D(gl.TEXTURE_2D, 0, internalFormat, 4, 4, 0, format, HALF, null);
+  const fbo = gl.createFramebuffer();
+  gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+  const ok = gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE;
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  gl.deleteFramebuffer(fbo); gl.deleteTexture(tex);
+  return ok;
+}
+const FMT_RGBA = { internal: gl.RGBA16F, format: gl.RGBA };
+if (!renderable(FMT_RGBA.internal, FMT_RGBA.format)) { document.getElementById('nogl').hidden = false; return; }
+const FMT_RG = renderable(gl.RG16F, gl.RG) ? { internal: gl.RG16F, format: gl.RG } : FMT_RGBA;
+const FMT_R  = renderable(gl.R16F, gl.RED) ? { internal: gl.R16F, format: gl.RED } : FMT_RG;
+
+/* ============================================================
+   SHADERS
+   ============================================================ */
+const VERT = `#version 300 es
+precision highp float;
+layout(location=0) in vec2 aPos;
+out vec2 vUv; out vec2 vL; out vec2 vR; out vec2 vT; out vec2 vB;
+uniform vec2 texelSize;
+void main(){
+  vUv = aPos * 0.5 + 0.5;
+  vL = vUv - vec2(texelSize.x, 0.0);
+  vR = vUv + vec2(texelSize.x, 0.0);
+  vT = vUv + vec2(0.0, texelSize.y);
+  vB = vUv - vec2(0.0, texelSize.y);
+  gl_Position = vec4(aPos, 0.0, 1.0);
+}`;
+
+const HEAD = `#version 300 es
+precision highp float; precision highp sampler2D;
+in vec2 vUv; in vec2 vL; in vec2 vR; in vec2 vT; in vec2 vB;
+out vec4 fragColor;
+`;
+
+const FRAG_COPY = HEAD + `
+uniform sampler2D uTexture;
+void main(){ fragColor = texture(uTexture, vUv); }`;
+
+const FRAG_CLEAR = HEAD + `
+uniform sampler2D uTexture; uniform float value;
+void main(){ fragColor = value * texture(uTexture, vUv); }`;
+
+const FRAG_SPLAT = HEAD + `
+uniform sampler2D uTarget; uniform float aspectRatio; uniform vec3 color; uniform vec2 point; uniform float radius;
+void main(){
+  vec2 p = vUv - point; p.x *= aspectRatio;
+  vec3 splat = exp(-dot(p, p) / radius) * color;
+  vec3 base = texture(uTarget, vUv).xyz;
+  fragColor = vec4(base + splat, 1.0);
+}`;
+
+const FRAG_ADVECT = HEAD + `
+uniform sampler2D uVelocity; uniform sampler2D uSource; uniform vec2 texelSize; uniform float dt; uniform float dissipation;
+void main(){
+  vec2 coord = vUv - dt * texture(uVelocity, vUv).xy * texelSize;
+  vec4 result = texture(uSource, coord);
+  float decay = 1.0 + dissipation * dt;
+  fragColor = result / decay;
+}`;
+
+const FRAG_DIVERGENCE = HEAD + `
+uniform sampler2D uVelocity;
+void main(){
+  float L = texture(uVelocity, vL).x; float R = texture(uVelocity, vR).x;
+  float T = texture(uVelocity, vT).y; float B = texture(uVelocity, vB).y;
+  vec2 C = texture(uVelocity, vUv).xy;
+  if (vL.x < 0.0) L = -C.x; if (vR.x > 1.0) R = -C.x;
+  if (vT.y > 1.0) T = -C.y; if (vB.y < 0.0) B = -C.y;
+  float div = 0.5 * (R - L + T - B);
+  fragColor = vec4(div, 0.0, 0.0, 1.0);
+}`;
+
+const FRAG_CURL = HEAD + `
+uniform sampler2D uVelocity;
+void main(){
+  float L = texture(uVelocity, vL).y; float R = texture(uVelocity, vR).y;
+  float T = texture(uVelocity, vT).x; float B = texture(uVelocity, vB).x;
+  float vorticity = R - L - T + B;
+  fragColor = vec4(0.5 * vorticity, 0.0, 0.0, 1.0);
+}`;
+
+const FRAG_VORTICITY = HEAD + `
+uniform sampler2D uVelocity; uniform sampler2D uCurl; uniform float curl; uniform float dt;
+void main(){
+  float L = texture(uCurl, vL).x; float R = texture(uCurl, vR).x;
+  float T = texture(uCurl, vT).x; float B = texture(uCurl, vB).x;
+  float C = texture(uCurl, vUv).x;
+  vec2 force = 0.5 * vec2(abs(T) - abs(B), abs(R) - abs(L));
+  force /= length(force) + 0.0001;
+  force *= curl * C; force.y *= -1.0;
+  vec2 vel = texture(uVelocity, vUv).xy;
+  vel += force * dt;
+  vel = min(max(vel, -1000.0), 1000.0);
+  fragColor = vec4(vel, 0.0, 1.0);
+}`;
+
+const FRAG_PRESSURE = HEAD + `
+uniform sampler2D uPressure; uniform sampler2D uDivergence;
+void main(){
+  float L = texture(uPressure, vL).x; float R = texture(uPressure, vR).x;
+  float T = texture(uPressure, vT).x; float B = texture(uPressure, vB).x;
+  float divergence = texture(uDivergence, vUv).x;
+  float pressure = (L + R + B + T - divergence) * 0.25;
+  fragColor = vec4(pressure, 0.0, 0.0, 1.0);
+}`;
+
+const FRAG_GRADIENT = HEAD + `
+uniform sampler2D uPressure; uniform sampler2D uVelocity;
+void main(){
+  float L = texture(uPressure, vL).x; float R = texture(uPressure, vR).x;
+  float T = texture(uPressure, vT).x; float B = texture(uPressure, vB).x;
+  vec2 velocity = texture(uVelocity, vUv).xy;
+  velocity -= vec2(R - L, T - B);
+  fragColor = vec4(velocity, 0.0, 1.0);
+}`;
+
+const FRAG_BLOOM_PRE = HEAD + `
+uniform sampler2D uTexture; uniform vec3 curve; uniform float threshold;
+void main(){
+  vec3 c = texture(uTexture, vUv).rgb;
+  float br = max(c.r, max(c.g, c.b));
+  float rq = clamp(br - curve.x, 0.0, curve.y);
+  rq = curve.z * rq * rq;
+  c *= max(rq, br - threshold) / max(br, 0.0001);
+  fragColor = vec4(c, 0.0);
+}`;
+
+const FRAG_BLUR = HEAD + `
+uniform sampler2D uTexture; uniform vec2 direction;
+void main(){
+  vec3 c = texture(uTexture, vUv).rgb * 0.2270270270;
+  c += texture(uTexture, vUv + direction * 1.3846153846).rgb * 0.3162162162;
+  c += texture(uTexture, vUv - direction * 1.3846153846).rgb * 0.3162162162;
+  c += texture(uTexture, vUv + direction * 3.2307692308).rgb * 0.0702702703;
+  c += texture(uTexture, vUv - direction * 3.2307692308).rgb * 0.0702702703;
+  fragColor = vec4(c, 1.0);
+}`;
+
+const FRAG_DISPLAY = HEAD + `
+uniform sampler2D uTexture; uniform sampler2D uBloom; uniform vec2 texelSize; uniform float bloomIntensity; uniform float time;
+float hash(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
+void main(){
+  vec3 c  = texture(uTexture, vUv).rgb;
+  vec3 lc = texture(uTexture, vL).rgb; vec3 rc = texture(uTexture, vR).rgb;
+  vec3 tc = texture(uTexture, vT).rgb; vec3 bc = texture(uTexture, vB).rgb;
+  float dx = length(rc) - length(lc);
+  float dy = length(tc) - length(bc);
+  vec3 n = normalize(vec3(dx, dy, length(texelSize)));
+  vec3 l = normalize(vec3(0.35, 0.5, 1.0));
+  float diffuse = clamp(dot(n, l) + 0.72, 0.72, 1.0);
+  float spec = pow(max(dot(reflect(-l, n), vec3(0.0, 0.0, 1.0)), 0.0), 24.0) * 0.18 * min(length(c) * 2.0, 1.0);
+  c = c * diffuse + spec;
+  c += texture(uBloom, vUv).rgb * bloomIntensity;
+  c += (hash(gl_FragCoord.xy + fract(time)) - 0.5) / 255.0;
+  fragColor = vec4(c, 1.0);
+}`;
+
+function compile(type, src) {
+  const sh = gl.createShader(type);
+  gl.shaderSource(sh, src);
+  gl.compileShader(sh);
+  if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
+    console.error(gl.getShaderInfoLog(sh));
+    throw new Error('Shader compile failed');
+  }
+  return sh;
+}
+const vertShader = compile(gl.VERTEX_SHADER, VERT);
+class Program {
+  constructor(fragSrc) {
+    this.program = gl.createProgram();
+    gl.attachShader(this.program, vertShader);
+    gl.attachShader(this.program, compile(gl.FRAGMENT_SHADER, fragSrc));
+    gl.linkProgram(this.program);
+    if (!gl.getProgramParameter(this.program, gl.LINK_STATUS)) {
+      console.error(gl.getProgramInfoLog(this.program));
+      throw new Error('Program link failed');
+    }
+    this.u = {};
+    const n = gl.getProgramParameter(this.program, gl.ACTIVE_UNIFORMS);
+    for (let i = 0; i < n; i++) {
+      const name = gl.getActiveUniform(this.program, i).name;
+      this.u[name] = gl.getUniformLocation(this.program, name);
+    }
+  }
+  bind() { gl.useProgram(this.program); }
+}
+
+const copyProgram       = new Program(FRAG_COPY);
+const clearProgram      = new Program(FRAG_CLEAR);
+const splatProgram      = new Program(FRAG_SPLAT);
+const advectionProgram  = new Program(FRAG_ADVECT);
+const divergenceProgram = new Program(FRAG_DIVERGENCE);
+const curlProgram       = new Program(FRAG_CURL);
+const vorticityProgram  = new Program(FRAG_VORTICITY);
+const pressureProgram   = new Program(FRAG_PRESSURE);
+const gradientProgram   = new Program(FRAG_GRADIENT);
+const bloomPreProgram   = new Program(FRAG_BLOOM_PRE);
+const blurProgram       = new Program(FRAG_BLUR);
+const displayProgram    = new Program(FRAG_DISPLAY);
+
+/* ============================================================
+   GEOMETRY + FRAMEBUFFERS
+   ============================================================ */
+const vbo = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, -1, 1, 1, 1, 1, -1]), gl.STATIC_DRAW);
+const ibo = gl.createBuffer();
+gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
+gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array([0, 1, 2, 0, 2, 3]), gl.STATIC_DRAW);
+gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+gl.enableVertexAttribArray(0);
+
+function blit(target) {
+  if (target == null) {
+    gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  } else {
+    gl.viewport(0, 0, target.width, target.height);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, target.fbo);
+  }
+  gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
+}
+
+function createFBO(w, h, fmt, filter) {
+  gl.activeTexture(gl.TEXTURE0);
+  const texture = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, filter);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, filter);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texImage2D(gl.TEXTURE_2D, 0, fmt.internal, w, h, 0, fmt.format, HALF, null);
+  const fbo = gl.createFramebuffer();
+  gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+  gl.viewport(0, 0, w, h);
+  gl.clearColor(0, 0, 0, 1);
+  gl.clear(gl.COLOR_BUFFER_BIT);
+  return {
+    texture, fbo, width: w, height: h, texelSizeX: 1 / w, texelSizeY: 1 / h,
+    attach(id) { gl.activeTexture(gl.TEXTURE0 + id); gl.bindTexture(gl.TEXTURE_2D, texture); return id; },
+    dispose() { gl.deleteTexture(texture); gl.deleteFramebuffer(fbo); }
+  };
+}
+function createDoubleFBO(w, h, fmt, filter) {
+  let a = createFBO(w, h, fmt, filter), b = createFBO(w, h, fmt, filter);
+  return {
+    width: w, height: h, texelSizeX: 1 / w, texelSizeY: 1 / h,
+    get read() { return a; }, set read(v) { a = v; },
+    get write() { return b; }, set write(v) { b = v; },
+    swap() { const t = a; a = b; b = t; }
+  };
+}
+function resizeFBO(old, w, h, fmt, filter) {
+  const next = createFBO(w, h, fmt, filter);
+  copyProgram.bind();
+  gl.uniform1i(copyProgram.u.uTexture, old.attach(0));
+  blit(next);
+  old.dispose();
+  return next;
+}
+function resizeDoubleFBO(target, w, h, fmt, filter) {
+  if (target.width === w && target.height === h) return target;
+  target.read = resizeFBO(target.read, w, h, fmt, filter);
+  target.write.dispose();
+  target.write = createFBO(w, h, fmt, filter);
+  target.width = w; target.height = h; target.texelSizeX = 1 / w; target.texelSizeY = 1 / h;
+  return target;
+}
+
+const isMobile = /Mobi|Android/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && Math.min(screen.width, screen.height) < 900);
+const CFG = {
+  SIM_RES: isMobile ? 128 : 192,
+  DYE_RES: isMobile ? 640 : 1200,
+  BLOOM_RES: 192,
+  DENSITY_DISSIPATION: 0.62,
+  VELOCITY_DISSIPATION: 0.22,
+  PRESSURE: 0.8,
+  PRESSURE_ITERATIONS: isMobile ? 14 : 22,
+  CURL: 30,
+  SPLAT_RADIUS: 0.24,
+  SPLAT_FORCE: 6000,
+  BLOOM_INTENSITY: 0.72,
+  BLOOM_THRESHOLD: 0.5,
+  BLOOM_KNEE: 0.7,
+};
+
+function getResolution(res) {
+  let aspect = gl.drawingBufferWidth / gl.drawingBufferHeight;
+  if (aspect < 1) aspect = 1 / aspect;
+  const min = Math.round(res), max = Math.round(res * aspect);
+  return gl.drawingBufferWidth > gl.drawingBufferHeight ? { width: max, height: min } : { width: min, height: max };
+}
+
+let dye, velocity, divergence, curl, pressure, bloomA, bloomB;
+function initFramebuffers() {
+  const sim = getResolution(CFG.SIM_RES);
+  const dyeRes = getResolution(CFG.DYE_RES);
+  const bloomRes = getResolution(CFG.BLOOM_RES);
+  gl.disable(gl.BLEND);
+  dye = dye ? resizeDoubleFBO(dye, dyeRes.width, dyeRes.height, FMT_RGBA, gl.LINEAR)
+            : createDoubleFBO(dyeRes.width, dyeRes.height, FMT_RGBA, gl.LINEAR);
+  velocity = velocity ? resizeDoubleFBO(velocity, sim.width, sim.height, FMT_RG, gl.LINEAR)
+                      : createDoubleFBO(sim.width, sim.height, FMT_RG, gl.LINEAR);
+  if (divergence) { divergence.dispose(); curl.dispose(); pressure.read.dispose(); pressure.write.dispose(); bloomA.dispose(); bloomB.dispose(); }
+  divergence = createFBO(sim.width, sim.height, FMT_R, gl.NEAREST);
+  curl       = createFBO(sim.width, sim.height, FMT_R, gl.NEAREST);
+  pressure   = createDoubleFBO(sim.width, sim.height, FMT_R, gl.NEAREST);
+  bloomA     = createFBO(bloomRes.width, bloomRes.height, FMT_RGBA, gl.LINEAR);
+  bloomB     = createFBO(bloomRes.width, bloomRes.height, FMT_RGBA, gl.LINEAR);
+}
+
+function resizeCanvas() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const w = Math.max(1, Math.floor(canvas.clientWidth * dpr));
+  const h = Math.max(1, Math.floor(canvas.clientHeight * dpr));
+  if (canvas.width !== w || canvas.height !== h) {
+    canvas.width = w; canvas.height = h;
+    return true;
+  }
+  return false;
+}
+resizeCanvas();
+initFramebuffers();
+
+/* ============================================================
+   SIMULATION
+   ============================================================ */
+function correctRadius(r) {
+  const aspect = canvas.width / canvas.height;
+  return aspect > 1 ? r * aspect : r;
+}
+function splat(x, y, dx, dy, color, radius = CFG.SPLAT_RADIUS) {
+  splatProgram.bind();
+  gl.uniform1i(splatProgram.u.uTarget, velocity.read.attach(0));
+  gl.uniform1f(splatProgram.u.aspectRatio, canvas.width / canvas.height);
+  gl.uniform2f(splatProgram.u.point, x, y);
+  gl.uniform3f(splatProgram.u.color, dx, dy, 0);
+  gl.uniform1f(splatProgram.u.radius, correctRadius(radius / 100));
+  blit(velocity.write); velocity.swap();
+  gl.uniform1i(splatProgram.u.uTarget, dye.read.attach(0));
+  gl.uniform3f(splatProgram.u.color, color.r, color.g, color.b);
+  blit(dye.write); dye.swap();
+}
+function burst(x, y, color, strength = 1, n = 12) {
+  const c = { r: color.r * 0.45, g: color.g * 0.45, b: color.b * 0.45 };
+  for (let i = 0; i < n; i++) {
+    const a = (i / n) * Math.PI * 2 + Math.random() * 0.3;
+    const f = (900 + Math.random() * 500) * strength;
+    splat(x, y, Math.cos(a) * f, Math.sin(a) * f, c, 0.4 * strength);
+  }
+}
+function randomSplats(amount) {
+  for (let i = 0; i < amount; i++) {
+    const color = randomColor(0.6);
+    const x = Math.random(), y = Math.random();
+    const dx = 1000 * (Math.random() - 0.5), dy = 1000 * (Math.random() - 0.5);
+    splat(x, y, dx, dy, color, 0.5 + Math.random() * 0.4);
+  }
+}
+function clearField() {
+  clearProgram.bind();
+  gl.uniform1f(clearProgram.u.value, 0);
+  gl.uniform1i(clearProgram.u.uTexture, dye.read.attach(0));
+  blit(dye.write); dye.swap();
+  gl.uniform1i(clearProgram.u.uTexture, velocity.read.attach(0));
+  blit(velocity.write); velocity.swap();
+}
+
+function step(dt) {
+  gl.disable(gl.BLEND);
+
+  curlProgram.bind();
+  gl.uniform2f(curlProgram.u.texelSize, velocity.texelSizeX, velocity.texelSizeY);
+  gl.uniform1i(curlProgram.u.uVelocity, velocity.read.attach(0));
+  blit(curl);
+
+  vorticityProgram.bind();
+  gl.uniform2f(vorticityProgram.u.texelSize, velocity.texelSizeX, velocity.texelSizeY);
+  gl.uniform1i(vorticityProgram.u.uVelocity, velocity.read.attach(0));
+  gl.uniform1i(vorticityProgram.u.uCurl, curl.attach(1));
+  gl.uniform1f(vorticityProgram.u.curl, CFG.CURL);
+  gl.uniform1f(vorticityProgram.u.dt, dt);
+  blit(velocity.write); velocity.swap();
+
+  divergenceProgram.bind();
+  gl.uniform2f(divergenceProgram.u.texelSize, velocity.texelSizeX, velocity.texelSizeY);
+  gl.uniform1i(divergenceProgram.u.uVelocity, velocity.read.attach(0));
+  blit(divergence);
+
+  clearProgram.bind();
+  gl.uniform1i(clearProgram.u.uTexture, pressure.read.attach(0));
+  gl.uniform1f(clearProgram.u.value, CFG.PRESSURE);
+  blit(pressure.write); pressure.swap();
+
+  pressureProgram.bind();
+  gl.uniform2f(pressureProgram.u.texelSize, velocity.texelSizeX, velocity.texelSizeY);
+  gl.uniform1i(pressureProgram.u.uDivergence, divergence.attach(0));
+  for (let i = 0; i < CFG.PRESSURE_ITERATIONS; i++) {
+    gl.uniform1i(pressureProgram.u.uPressure, pressure.read.attach(1));
+    blit(pressure.write); pressure.swap();
+  }
+
+  gradientProgram.bind();
+  gl.uniform2f(gradientProgram.u.texelSize, velocity.texelSizeX, velocity.texelSizeY);
+  gl.uniform1i(gradientProgram.u.uPressure, pressure.read.attach(0));
+  gl.uniform1i(gradientProgram.u.uVelocity, velocity.read.attach(1));
+  blit(velocity.write); velocity.swap();
+
+  advectionProgram.bind();
+  gl.uniform2f(advectionProgram.u.texelSize, velocity.texelSizeX, velocity.texelSizeY);
+  const velId = velocity.read.attach(0);
+  gl.uniform1i(advectionProgram.u.uVelocity, velId);
+  gl.uniform1i(advectionProgram.u.uSource, velId);
+  gl.uniform1f(advectionProgram.u.dt, dt);
+  gl.uniform1f(advectionProgram.u.dissipation, CFG.VELOCITY_DISSIPATION);
+  blit(velocity.write); velocity.swap();
+
+  gl.uniform1i(advectionProgram.u.uVelocity, velocity.read.attach(0));
+  gl.uniform1i(advectionProgram.u.uSource, dye.read.attach(1));
+  gl.uniform1f(advectionProgram.u.dissipation, CFG.DENSITY_DISSIPATION);
+  blit(dye.write); dye.swap();
+}
+
+function applyBloom(source) {
+  bloomPreProgram.bind();
+  const knee = CFG.BLOOM_THRESHOLD * CFG.BLOOM_KNEE + 0.0001;
+  gl.uniform3f(bloomPreProgram.u.curve, CFG.BLOOM_THRESHOLD - knee, knee * 2, 0.25 / knee);
+  gl.uniform1f(bloomPreProgram.u.threshold, CFG.BLOOM_THRESHOLD);
+  gl.uniform1i(bloomPreProgram.u.uTexture, source.attach(0));
+  blit(bloomA);
+
+  blurProgram.bind();
+  const passes = [1, 2, 3];
+  for (const s of passes) {
+    gl.uniform1i(blurProgram.u.uTexture, bloomA.attach(0));
+    gl.uniform2f(blurProgram.u.direction, bloomA.texelSizeX * s, 0);
+    blit(bloomB);
+    gl.uniform1i(blurProgram.u.uTexture, bloomB.attach(0));
+    gl.uniform2f(blurProgram.u.direction, 0, bloomB.texelSizeY * s);
+    blit(bloomA);
+  }
+}
+
+function render(time) {
+  applyBloom(dye.read);
+  displayProgram.bind();
+  gl.uniform2f(displayProgram.u.texelSize, 1 / gl.drawingBufferWidth, 1 / gl.drawingBufferHeight);
+  gl.uniform1i(displayProgram.u.uTexture, dye.read.attach(0));
+  gl.uniform1i(displayProgram.u.uBloom, bloomA.attach(1));
+  gl.uniform1f(displayProgram.u.bloomIntensity, CFG.BLOOM_INTENSITY);
+  gl.uniform1f(displayProgram.u.time, time);
+  blit(null);
+}
+
+/* ============================================================
+   声音 — 生成式背景音乐 + 交互音
+   按 N 切换：逍遥游 · 远行 · 夜航 · 天光 · 留白
+   ============================================================ */
+const hud = document.getElementById('hud');
+const intro = document.getElementById('intro');
+const toast = document.getElementById('toast');
+const palName = document.getElementById('palName');
+const musicName = document.getElementById('musicName');
+
+const MUSIC = [
+  /* 逍遥游 — 八个长音在不同周期的循环上漂浮，如风过竹林，D 大调 */
+  { name: '逍遥游', root: 146.83, scale: [0, 2, 4, 7, 9], pluckOct: 12, bells: [24, 28, 31, 35, 38, 40, 43],
+    start(S) {
+      const ctx = S.ctx, t0 = ctx.currentTime;
+      const bus = S.makeBus(3);
+      const nodes = [], timers = [];
+      const drone = (semi, type, gain) => {
+        const o = ctx.createOscillator(); o.type = type; o.frequency.value = S.freq(semi);
+        const g = ctx.createGain(); g.gain.value = gain;
+        o.connect(g); g.connect(bus); o.start(); nodes.push(o);
+      };
+      drone(-12, 'sine', 0.08); drone(-5, 'triangle', 0.02);
+      const voices = [[0, 19.7], [4, 23.3], [7, 17.1], [11, 29.9], [14, 31.7], [16, 37.3], [19, 26.3], [23, 41.9]]
+        .map(([semi, period]) => ({ semi, period, next: t0 + 1 + Math.random() * period * 0.6, pan: (Math.random() - 0.5) * 1.3 }));
+      const tone = (semi, t, pan) => {
+        const f = S.freq(semi);
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(0.1, t + 2.4);
+        g.gain.setValueAtTime(0.1, t + 5);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 11);
+        const o1 = ctx.createOscillator(); o1.type = 'sine'; o1.frequency.value = f;
+        const o2 = ctx.createOscillator(); o2.type = 'triangle'; o2.frequency.value = f; o2.detune.value = 6;
+        const o3 = ctx.createOscillator(); o3.type = 'sine'; o3.frequency.value = f * 2; o3.detune.value = -5;
+        const g2 = ctx.createGain(); g2.gain.value = 0.45;
+        const g3 = ctx.createGain(); g3.gain.value = 0.18;
+        const p = ctx.createStereoPanner(); p.pan.value = pan;
+        o1.connect(g); o2.connect(g2); g2.connect(g); o3.connect(g3); g3.connect(g); g.connect(p); p.connect(bus);
+        o1.start(t); o2.start(t); o3.start(t);
+        o1.stop(t + 11.5); o2.stop(t + 11.5); o3.stop(t + 11.5);
+      };
+      const tick = () => {
+        const now = ctx.currentTime;
+        for (const v of voices) {
+          if (v.next < now - 1) v.next = now + Math.random() * 3;
+          while (v.next < now + 0.5) { tone(v.semi, v.next, v.pan); v.next += v.period; }
+        }
+      };
+      tick(); timers.push(setInterval(tick, 250));
+      return S.stopper(bus, nodes, timers);
+    } },
+
+  /* 远行 — 缓慢的琶音行者，伴着心跳与远方的回声，A 小调 */
+  { name: '远行', root: 110, scale: [0, 3, 5, 7, 10], pluckOct: 24, bells: [36, 39, 43, 46, 48, 51, 55],
+    start(S) {
+      const ctx = S.ctx;
+      const bus = S.makeBus(2.5);
+      const nodes = [], timers = [];
+      const BPM = 84, step = 60 / BPM / 4, bar = step * 16;
+      const src = ctx.createGain();
+      const dry = ctx.createGain(); dry.gain.value = 0.8; src.connect(dry); dry.connect(bus);
+      const dL = ctx.createDelay(2), dR = ctx.createDelay(2);
+      dL.delayTime.value = step * 3; dR.delayTime.value = step * 3;
+      const fbL = ctx.createGain(), fbR = ctx.createGain(); fbL.gain.value = 0.42; fbR.gain.value = 0.42;
+      const pL = ctx.createStereoPanner(), pR = ctx.createStereoPanner(); pL.pan.value = -0.7; pR.pan.value = 0.7;
+      const wet = ctx.createGain(); wet.gain.value = 0.4;
+      src.connect(dL); dL.connect(fbL); fbL.connect(dR); dR.connect(fbR); fbR.connect(dL);
+      dL.connect(pL); dR.connect(pR); pL.connect(wet); pR.connect(wet); wet.connect(bus);
+      const chords = [[0, 3, 7], [-4, 0, 3], [3, 7, 10], [-2, 2, 5]];
+      const pattern = [0, -1, 2, 3, -1, 5, 4, -1, 0, 2, -1, 5, 3, -1, 4, 1];
+      const pluck = (semi, t, vel) => {
+        const f = S.freq(semi);
+        const o = ctx.createOscillator(); o.type = 'triangle'; o.frequency.value = f;
+        const o2 = ctx.createOscillator(); o2.type = 'sine'; o2.frequency.value = f * 2;
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vel, t + 0.006); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.42);
+        const g2 = ctx.createGain(); g2.gain.value = 0.3;
+        o.connect(g); o2.connect(g2); g2.connect(g); g.connect(src);
+        o.start(t); o2.start(t); o.stop(t + 0.5); o2.stop(t + 0.5);
+      };
+      const bass = (semi, t) => {
+        const f = S.freq(semi - 12);
+        const o = ctx.createOscillator(); o.type = 'triangle'; o.frequency.value = f;
+        const o2 = ctx.createOscillator(); o2.type = 'sine'; o2.frequency.value = f;
+        const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 260;
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.17, t + 0.08);
+        g.gain.setValueAtTime(0.17, t + bar - 0.5); g.gain.linearRampToValueAtTime(0, t + bar - 0.05);
+        o.connect(lp); o2.connect(lp); lp.connect(g); g.connect(bus);
+        o.start(t); o2.start(t); o.stop(t + bar); o2.stop(t + bar);
+      };
+      const thump = (t) => {
+        const o = ctx.createOscillator(); o.type = 'sine';
+        o.frequency.setValueAtTime(70, t); o.frequency.exponentialRampToValueAtTime(34, t + 0.14);
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.28, t + 0.006); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.32);
+        o.connect(g); g.connect(bus); o.start(t); o.stop(t + 0.35);
+      };
+      let stepIndex = 0, next = ctx.currentTime + 0.1;
+      const tick = () => {
+        const now = ctx.currentTime;
+        if (next < now - 0.5) next = now + 0.05;
+        while (next < now + 0.2) {
+          const chord = chords[Math.floor(stepIndex / 16) % 4], s = stepIndex % 16;
+          if (s === 0) bass(chord[0], next);
+          if (s === 0 || s === 8) thump(next);
+          const idx = pattern[s];
+          if (idx >= 0) pluck(chord[idx % 3] + 12 * Math.floor(idx / 3) + 12, next, s % 4 === 0 ? 0.16 : 0.11);
+          next += step; stepIndex++;
+        }
+      };
+      tick(); timers.push(setInterval(tick, 50));
+      return S.stopper(bus, nodes, timers);
+    } },
+
+  /* 夜航 — 深夜的海，低沉辽阔，风声与远钟，E 小调 */
+  { name: '夜航', root: 82.41, scale: [0, 3, 5, 7, 10], pluckOct: 24, bells: [36, 39, 43, 46, 48, 51, 55],
+    start(S) {
+      const ctx = S.ctx;
+      const bus = S.makeBus(4);
+      const nodes = [], timers = [];
+      const sub = ctx.createOscillator(); sub.type = 'sine'; sub.frequency.value = S.freq(-12);
+      const sg = ctx.createGain(); sg.gain.value = 0.14; sub.connect(sg); sg.connect(bus); sub.start(); nodes.push(sub);
+      const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 240; lp.Q.value = 1.4;
+      const sawG = ctx.createGain(); sawG.gain.value = 0.06; lp.connect(sawG); sawG.connect(bus);
+      [[0, -8], [0, 8], [7, 3], [-12, 0]].forEach(([semi, det]) => {
+        const o = ctx.createOscillator(); o.type = 'sawtooth'; o.frequency.value = S.freq(semi); o.detune.value = det;
+        o.connect(lp); o.start(); nodes.push(o);
+      });
+      const lfo = ctx.createOscillator(); lfo.frequency.value = 0.06;
+      const lg = ctx.createGain(); lg.gain.value = 140; lfo.connect(lg); lg.connect(lp.frequency); lfo.start(); nodes.push(lfo);
+      const len = ctx.sampleRate * 2, nb = ctx.createBuffer(1, len, ctx.sampleRate), d = nb.getChannelData(0);
+      for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+      const noise = ctx.createBufferSource(); noise.buffer = nb; noise.loop = true;
+      const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 520; bp.Q.value = 0.9;
+      const ng = ctx.createGain(); ng.gain.value = 0.04;
+      noise.connect(bp); bp.connect(ng); ng.connect(bus); noise.start(); nodes.push(noise);
+      const lfo2 = ctx.createOscillator(); lfo2.frequency.value = 0.045;
+      const lg2 = ctx.createGain(); lg2.gain.value = 320; lfo2.connect(lg2); lg2.connect(bp.frequency); lfo2.start(); nodes.push(lfo2);
+      const distant = () => { S.bell(Math.random(), 0.35); timers.push(setTimeout(distant, 8000 + Math.random() * 9000)); };
+      timers.push(setTimeout(distant, 5000));
+      return S.stopper(bus, nodes, timers);
+    } },
+
+  /* 天光 — 云开见日，maj7 和弦缓缓流转，A 大调 */
+  { name: '天光', root: 110, scale: [0, 2, 4, 7, 9], pluckOct: 24, bells: [36, 40, 43, 47, 48, 52, 55],
+    start(S) {
+      const ctx = S.ctx;
+      const bus = S.makeBus(4);
+      const nodes = [], timers = [], voices = [];
+      const chords = [[0, 4, 7, 11], [9, 12, 16, 19], [5, 9, 12, 16], [7, 12, 14, 19]];
+      chords[0].forEach((semi, i) => {
+        const f = S.freq(semi + 12);
+        const g = ctx.createGain(); g.gain.value = 0.028;
+        const lfo = ctx.createOscillator(); lfo.frequency.value = 0.05 + i * 0.013;
+        const lg = ctx.createGain(); lg.gain.value = 0.012; lfo.connect(lg); lg.connect(g.gain); lfo.start(); nodes.push(lfo);
+        const o1 = ctx.createOscillator(); o1.type = 'sine'; o1.frequency.value = f;
+        const o2 = ctx.createOscillator(); o2.type = 'triangle'; o2.frequency.value = f; o2.detune.value = 6 - i * 3;
+        const o3 = ctx.createOscillator(); o3.type = 'sine'; o3.frequency.value = f * 2; o3.detune.value = -4;
+        const g3 = ctx.createGain(); g3.gain.value = 0.25;
+        const pan = ctx.createStereoPanner(); pan.pan.value = (i - 1.5) * 0.4;
+        o1.connect(g); o2.connect(g); o3.connect(g3); g3.connect(g); g.connect(pan); pan.connect(bus);
+        o1.start(); o2.start(); o3.start(); nodes.push(o1, o2, o3);
+        voices.push({ o1, o2, o3 });
+      });
+      let ci = 0;
+      const change = () => {
+        ci = (ci + 1) % chords.length;
+        const now = ctx.currentTime;
+        voices.forEach((v, i) => {
+          const f = S.freq(chords[ci][i] + 12);
+          [[v.o1, f], [v.o2, f], [v.o3, f * 2]].forEach(([o, fr]) => {
+            o.frequency.cancelScheduledValues(now);
+            o.frequency.setValueAtTime(o.frequency.value, now);
+            o.frequency.exponentialRampToValueAtTime(fr, now + 2.5);
+          });
+        });
+        timers.push(setTimeout(change, 11000 + Math.random() * 5000));
+      };
+      timers.push(setTimeout(change, 12000));
+      return S.stopper(bus, nodes, timers);
+    } },
+
+  /* 留白 — 没有背景音乐，只留下你亲手激起的声音 */
+  { name: '留白', root: 146.83, scale: [0, 2, 4, 7, 9], pluckOct: 12, bells: [24, 28, 31, 35, 38, 40, 43], start: null },
+];
+
+const Sound = {
+  ctx: null, master: null, filter: null, enabled: true, ready: false,
+  modeIndex: 0, current: null, lastPluck: 0,
+  get mode() { return MUSIC[this.modeIndex]; },
+  freq(semi) { return this.mode.root * Math.pow(2, semi / 12); },
+  init() {
+    if (this.ctx) { if (this.ctx.state === 'suspended') this.ctx.resume(); return; }
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    const ctx = this.ctx = new AC();
+    if (ctx.state === 'suspended') ctx.resume();
+    const master = this.master = ctx.createGain();
+    master.gain.value = 0;
+    const comp = ctx.createDynamicsCompressor();
+    comp.threshold.value = -18; comp.ratio.value = 4; comp.attack.value = 0.01; comp.release.value = 0.4;
+    master.connect(comp); comp.connect(ctx.destination);
+
+    const filter = this.filter = ctx.createBiquadFilter();
+    filter.type = 'lowpass'; filter.frequency.value = 1400; filter.Q.value = 0.6;
+
+    const dry = ctx.createGain(); dry.gain.value = 0.55;
+    const wet = ctx.createGain(); wet.gain.value = 0.7;
+    const conv = ctx.createConvolver(); conv.buffer = this.makeIR(3.6, 2.4);
+    filter.connect(dry); dry.connect(master);
+    filter.connect(conv); conv.connect(wet); wet.connect(master);
+
+    this.ready = true;
+    this.setEnabled(this.enabled, true);
+    this.startMode();
+  },
+  makeIR(seconds, decay) {
+    const rate = this.ctx.sampleRate, len = Math.floor(rate * seconds);
+    const buf = this.ctx.createBuffer(2, len, rate);
+    for (let c = 0; c < 2; c++) {
+      const d = buf.getChannelData(c);
+      for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, decay);
+    }
+    return buf;
+  },
+  makeBus(fade) {
+    const g = this.ctx.createGain();
+    g.gain.value = 0;
+    g.gain.linearRampToValueAtTime(1, this.ctx.currentTime + fade);
+    g.connect(this.filter);
+    return g;
+  },
+  stopper(bus, nodes, timers) {
+    const ctx = this.ctx;
+    return {
+      stop() {
+        const t = ctx.currentTime;
+        bus.gain.cancelScheduledValues(t);
+        bus.gain.setValueAtTime(bus.gain.value, t);
+        bus.gain.linearRampToValueAtTime(0, t + 2);
+        timers.forEach(clearTimeout);
+        setTimeout(() => { nodes.forEach(n => { try { n.stop(); } catch (e) {} }); bus.disconnect(); }, 2300);
+      }
+    };
+  },
+  startMode() {
+    if (this.current) { this.current.stop(); this.current = null; }
+    if (this.mode.start) this.current = this.mode.start(this);
+  },
+  setMode(i) {
+    this.modeIndex = ((i % MUSIC.length) + MUSIC.length) % MUSIC.length;
+    musicName.textContent = '♪ ' + this.mode.name;
+    if (this.ready) this.startMode();
+  },
+  pluck(x, y, vel) {
+    if (!this.ready || !this.enabled) return;
+    const ctx = this.ctx, t = ctx.currentTime;
+    if (t - this.lastPluck < 0.075) return;
+    this.lastPluck = t;
+    const m = this.mode;
+    const idx = Math.min(9, Math.max(0, Math.floor(x * 10)));
+    const semi = m.scale[idx % 5] + 12 * Math.floor(idx / 5) + m.pluckOct + (y > 0.5 ? 12 : 0);
+    const f = this.freq(semi);
+    const v = 0.05 + Math.min(vel, 1) * 0.16;
+    const o1 = ctx.createOscillator(); o1.type = 'sine'; o1.frequency.value = f;
+    const o2 = ctx.createOscillator(); o2.type = 'triangle'; o2.frequency.value = f * 2; o2.detune.value = 4;
+    const g = ctx.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + 1.8);
+    const g2 = ctx.createGain(); g2.gain.value = 0.2;
+    const pan = ctx.createStereoPanner(); pan.pan.value = (x - 0.5) * 1.4;
+    o1.connect(g); o2.connect(g2); g2.connect(g); g.connect(pan); pan.connect(this.filter);
+    o1.start(t); o2.start(t); o1.stop(t + 1.9); o2.stop(t + 1.9);
+    this.filter.frequency.cancelScheduledValues(t);
+    this.filter.frequency.setTargetAtTime(1400 + Math.min(vel, 1) * 3200, t, 0.08);
+    this.filter.frequency.setTargetAtTime(1400, t + 0.25, 0.9);
+  },
+  bell(x, vel = 0.5) {
+    if (!this.ready || !this.enabled) return;
+    const ctx = this.ctx, t = ctx.currentTime;
+    const m = this.mode;
+    const f = this.freq(m.bells[Math.floor(Math.random() * m.bells.length)]);
+    const g = ctx.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.09 * vel, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + 4.5);
+    const o = ctx.createOscillator(); o.type = 'sine'; o.frequency.value = f;
+    const o2 = ctx.createOscillator(); o2.type = 'sine'; o2.frequency.value = f * 2.76; // inharmonic partial for a bell-like shimmer
+    const g2 = ctx.createGain(); g2.gain.setValueAtTime(0.35, t); g2.gain.exponentialRampToValueAtTime(0.0001, t + 1.2);
+    const pan = ctx.createStereoPanner(); pan.pan.value = (x - 0.5) * 1.2;
+    o.connect(g); o2.connect(g2); g2.connect(g); g.connect(pan); pan.connect(this.filter);
+    o.start(t); o2.start(t); o.stop(t + 4.6); o2.stop(t + 4.6);
+  },
+  setEnabled(on, immediate) {
+    this.enabled = on;
+    hud.classList.toggle('muted', !on);
+    if (!this.master) return;
+    const t = this.ctx.currentTime;
+    this.master.gain.cancelScheduledValues(t);
+    this.master.gain.setValueAtTime(this.master.gain.value, t);
+    this.master.gain.linearRampToValueAtTime(on ? 0.9 : 0, t + (immediate ? 2.5 : 0.6));
+  }
+};
+
+/* ============================================================
+   INPUT
+   ============================================================ */
+const pointers = new Map();
+let idle = 10, started = false, uiHidden = false, wantCapture = false;
+let toastTimer = 0;
+
+function showToast(text) {
+  toast.textContent = text;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 1400);
+}
+function setPalette(i) {
+  palIndex = ((i % PALETTES.length) + PALETTES.length) % PALETTES.length;
+  palette = PALETTES[palIndex];
+  palName.textContent = palette.name;
+  showToast(palette.name);
+}
+function wake() {
+  idle = 0;
+  document.body.classList.remove('idle');
+  if (!started) {
+    started = true;
+    intro.classList.add('gone');
+  }
+  Sound.init();
+}
+function toUv(e) {
+  const r = canvas.getBoundingClientRect();
+  return { x: (e.clientX - r.left) / r.width, y: 1 - (e.clientY - r.top) / r.height };
+}
+
+canvas.addEventListener('pointerdown', e => {
+  wake();
+  canvas.setPointerCapture(e.pointerId);
+  const p = toUv(e);
+  pointers.set(e.pointerId, { x: p.x, y: p.y, px: p.x, py: p.y, dx: 0, dy: 0, moved: false, hue: Math.random(), down: performance.now(), travel: 0, sx: p.x, sy: p.y });
+});
+canvas.addEventListener('pointermove', e => {
+  const ptr = pointers.get(e.pointerId);
+  if (!ptr) { idle = 0; document.body.classList.remove('idle'); return; }
+  idle = 0;
+  const p = toUv(e);
+  const aspect = canvas.width / canvas.height;
+  let dx = p.x - ptr.x, dy = p.y - ptr.y;
+  ptr.travel += Math.hypot(dx * aspect, dy);
+  if (aspect < 1) dx *= aspect; else dy /= aspect;
+  ptr.dx = dx * CFG.SPLAT_FORCE; ptr.dy = dy * CFG.SPLAT_FORCE;
+  ptr.x = p.x; ptr.y = p.y;
+  ptr.moved = Math.abs(dx) > 0 || Math.abs(dy) > 0;
+  ptr.hue += Math.hypot(dx, dy) * 0.6;
+  if (ptr.travel > 0.035) { Sound.pluck(p.x, p.y, Math.hypot(dx, dy) * 40); ptr.travel = 0; }
+});
+function endPointer(e) {
+  const ptr = pointers.get(e.pointerId);
+  if (!ptr) return;
+  pointers.delete(e.pointerId);
+  const held = performance.now() - ptr.down;
+  const dist = Math.hypot(ptr.x - ptr.sx, ptr.y - ptr.sy);
+  if (held < 320 && dist < 0.01) {
+    burst(ptr.x, ptr.y, paletteColor(ptr.hue, 1), 1.1);
+    Sound.bell(ptr.x, 0.9);
+  }
+}
+canvas.addEventListener('pointerup', endPointer);
+canvas.addEventListener('pointercancel', endPointer);
+
+window.addEventListener('keydown', e => {
+  if (e.repeat) return;
+  const k = e.key.toLowerCase();
+  if (k === ' ') { e.preventDefault(); wake(); randomSplats(14 + Math.floor(Math.random() * 12)); Sound.bell(Math.random(), 1); }
+  else if (k === 'p') { wake(); setPalette(palIndex + 1); }
+  else if (k === 'm') { wake(); Sound.setEnabled(!Sound.enabled); showToast(Sound.enabled ? '万籁有声' : '万籁俱寂'); }
+  else if (k === 'n') { wake(); Sound.setMode(Sound.modeIndex + 1); showToast('♪ ' + Sound.mode.name); }
+  else if (k === 'c') { wake(); clearField(); showToast('涤荡一清'); }
+  else if (k === 's') { wake(); wantCapture = true; }
+  else if (k === 'h') { uiHidden = !uiHidden; document.body.classList.toggle('hide-ui', uiHidden); showToast(uiHidden ? '隐身山林' : '重返人间'); }
+  else if (k === 'f') {
+    if (document.fullscreenElement) document.exitFullscreen();
+    else if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
+  }
+  else if (k >= '1' && k <= '6') { wake(); setPalette(+k - 1); }
+});
+document.getElementById('btnSound').addEventListener('click', () => { wake(); Sound.setEnabled(!Sound.enabled); showToast(Sound.enabled ? '万籁有声' : '万籁俱寂'); });
+document.getElementById('btnMusic').addEventListener('click', () => { wake(); Sound.setMode(Sound.modeIndex + 1); showToast('♪ ' + Sound.mode.name); });
+window.addEventListener('resize', () => { if (resizeCanvas()) initFramebuffers(); });
+document.addEventListener('visibilitychange', () => { if (document.hidden) pointers.clear(); });
+
+/* ============================================================
+   游魂 — 无人时替你继续追风的三缕游魂，让画面永不停息
+   ============================================================ */
+const spirits = Array.from({ length: 3 }, (_, i) => ({
+  t: Math.random() * 100, seed: i * 7.31 + 1.3, x: 0.5, y: 0.5, hue: Math.random(), hueTimer: Math.random() * 3
+}));
+let spiritEnergy = 1, burstTimer = 3;
+
+function spiritPos(s) {
+  const t = s.t, k = s.seed;
+  return {
+    x: 0.5 + 0.40 * Math.sin(t * 0.61 + k) * Math.cos(t * 0.23 + k * 1.7),
+    y: 0.5 + 0.38 * Math.cos(t * 0.47 + k * 0.5) * Math.sin(t * 0.31 + k)
+  };
+}
+for (const s of spirits) { const p = spiritPos(s); s.x = p.x; s.y = p.y; }
+
+function updateSpirits(dt) {
+  const target = idle > 2.5 ? 1 : 0;
+  spiritEnergy += (target - spiritEnergy) * Math.min(1, dt * 1.2);
+  if (spiritEnergy < 0.02) { for (const s of spirits) { s.t += dt * 0.5; const p = spiritPos(s); s.x = p.x; s.y = p.y; } return; }
+  const aspect = canvas.width / canvas.height;
+  for (const s of spirits) {
+    s.t += dt * 0.5;
+    s.hueTimer -= dt;
+    if (s.hueTimer < 0) { s.hue = Math.random(); s.hueTimer = 4 + Math.random() * 5; }
+    const p = spiritPos(s);
+    let dx = p.x - s.x, dy = p.y - s.y;
+    if (aspect < 1) dx *= aspect; else dy /= aspect;
+    s.x = p.x; s.y = p.y;
+    const c = paletteColor(s.hue + s.t * 0.02, 0.11 * spiritEnergy);
+    splat(s.x, s.y, dx * CFG.SPLAT_FORCE * 0.9, dy * CFG.SPLAT_FORCE * 0.9, c, 0.17);
+  }
+  burstTimer -= dt * spiritEnergy;
+  if (burstTimer < 0) {
+    burstTimer = 5 + Math.random() * 7;
+    const x = 0.2 + Math.random() * 0.6, y = 0.2 + Math.random() * 0.6;
+    burst(x, y, randomColor(0.7 * spiritEnergy), 0.7 + Math.random() * 0.5, 10);
+    Sound.bell(x, 0.5);
+  }
+}
+
+/* ============================================================
+   MAIN LOOP
+   ============================================================ */
+function capture() {
+  wantCapture = false;
+  canvas.toBlob(blob => {
+    if (!blob) return;
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'xiaoyao-ziyou-' + new Date().toISOString().replace(/[:.]/g, '-') + '.png';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  }, 'image/png');
+  showToast('已留影');
+}
+
+let lastTime = performance.now(), simTime = 0;
+randomSplats(10);
+burst(0.5, 0.5, randomColor(1), 1.2, 16);
+
+function loop(now) {
+  requestAnimationFrame(loop);
+  let dt = (now - lastTime) / 1000;
+  lastTime = now;
+  dt = Math.min(Math.max(dt, 0), 1 / 30);
+  simTime += dt;
+  idle += dt;
+  if (idle > 3.5 && started) document.body.classList.add('idle');
+
+  if (resizeCanvas()) initFramebuffers();
+  updateSpirits(dt);
+  for (const ptr of pointers.values()) {
+    if (!ptr.moved) continue;
+    ptr.moved = false;
+    splat(ptr.x, ptr.y, ptr.dx, ptr.dy, paletteColor(ptr.hue, 0.6));
+  }
+  step(Math.max(dt, 1 / 120));
+  render(simTime);
+  if (wantCapture) capture();
+}
+requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
