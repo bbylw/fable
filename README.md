@@ -1,3 +1,11 @@
+# 逍遥 · 自由中文版 — Fork 自 Synesthesia
+
+> 本仓库是中文自由主题 Fork，原项目完整内容完整保留在下方。
+> **原仓库地址：https://github.com/MiaAI-Lab/Claude-Fable-5.1-Beautiful-HTML**
+> **本 Fork 在线演示：https://fable.ndjp.net/**
+> 本 Fork 的改动说明见文末 `本 Fork 的更新` 一节。
+
+---
 # Synesthesia — a fluid you can hear
 
 > *"Create the most beautiful HTML file you could think of. Something that when people see it, all they can say is 'WOW!!!' It must be visually impressive, beautiful, and just music to the eyes. Be thorough, but creative. Don't make mistakes."*
@@ -84,3 +92,32 @@ Fonts: Cormorant Garamond and Inter, from Google Fonts.
 ## License
 
 MIT
+
+---
+
+## 本 Fork 的更新（bbylw/fable）
+
+基于原 commit 的 `index.html` 单文件做的汉化与主题改造，流体求解、着色器、音频引擎数值逻辑未动。
+
+**主题：追求自由**
+- 标题：`Synesthesia — a fluid you can hear` → `逍遥 — 看得见风，听得见光`
+- 开屏：`Synesthesia / a fluid you can hear / touch anywhere to begin` → `自由 / 风有形 · 光有声 · 心无界 / 触碰任意处 御风而行`
+- 品牌：`Synesthesia / Aurora / ♪ Drift` → `逍遥 / 长空 / ♪ 逍遥游`
+
+**界面汉化（`index.html`）**
+- HUD：声音 / 曲风 / 拖动生风 / 轻点泛涟 / 空格迸发 / 换色 / 涤荡 / 留影 / 满屏 / 隐身
+- 无 WebGL 2 提示、toast（万籁有声 / 万籁俱寂 / 涤荡一清 / 已留影 / 隐身山林）、保存文件名 `xiaoyao-ziyou-*.png` 全部中文化
+- `lang="en"` → `lang="zh-CN"`
+
+**自由意象的配色与音乐（仅重命名，数值不变）**
+- 六色：Aurora · Ember · Ocean · Orchid · Prism · Moonlight → 长空 · 逐火 · 归海 · 旷野 · 霓虹 · 明月
+- 五曲风：Drift · Pulse · Abyss · Halo · Silence → 逍遥游 · 远行 · 夜航 · 天光 · 留白
+- 三缕 spirits 注释改为“替你继续追风的三缕游魂”
+
+**中文字体与排印**
+- 新增 `Noto Serif SC / Noto Sans SC`，衬线优先中文，保留 Cormorant Garamond / Inter 做拉丁回退
+- 标题、toast 字间距放大（`.35em / .3em`），更适配中文留白美学
+
+**部署**
+- GitHub Pages（`main` / `/`），自定义域 `fable.ndjp.net`（`CNAME` 文件）
+- 访问：https://fable.ndjp.net/ ，回退：https://bbylw.github.io/fable/
