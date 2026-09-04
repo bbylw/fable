@@ -5,7 +5,6 @@
 >
 > This is a Chinese, freedom-themed fork.
 > - **Original repo:** https://github.com/MiaAI-Lab/Claude-Fable-5.1-Beautiful-HTML
-> - **This fork demo:** https://fable.ndjp.net/
 > - **This fork repo:** https://github.com/bbylw/fable
 > - Original content is fully preserved below. Changes made by this fork are listed in [Changes in this fork](#changes-in-this-fork-bbylwfable).
 
@@ -16,7 +15,6 @@
 A real-time, GPU-accelerated fluid simulation that paints with light and answers with generative ambient music. One HTML file. No build step, no dependencies, no npm install.
 
 **▶ Original live demo:** https://miaai-lab.github.io/Claude-Fable-5.1-Beautiful-HTML/
-**▶ This fork live demo:** https://fable.ndjp.net/
 
 ---
 
@@ -108,7 +106,6 @@ Chinese localization + freedom theme on top of the original single-file `index.h
 - Palettes renamed only: Aurora · Ember · Ocean · Orchid · Prism · Moonlight → 长空 · 逐火 · 归海 · 旷野 · 霓虹 · 明月
 - Music modes renamed only: Drift · Pulse · Abyss · Halo · Silence → 逍遥游 · 远行 · 夜航 · 天光 · 留白
 - Typography: added `Noto Serif SC / Noto Sans SC`, kept Cormorant Garamond / Inter as Latin fallback; widened letter-spacing for Chinese
-- Deploy: GitHub Pages (`main` / `/`) with custom domain `fable.ndjp.net` (`CNAME` file)
 
 ## License
 
@@ -123,7 +120,6 @@ MIT
 >
 > 本仓库是中文自由主题 Fork，原项目内容完整保留并翻译如下。
 > - **原仓库地址：https://github.com/MiaAI-Lab/Claude-Fable-5.1-Beautiful-HTML**
-> - **本 Fork 演示：https://fable.ndjp.net/**
 > - **本 Fork 仓库：https://github.com/bbylw/fable**
 > - 原项目演示：https://miaai-lab.github.io/Claude-Fable-5.1-Beautiful-HTML/
 
@@ -134,7 +130,6 @@ MIT
 实时 GPU 加速的流体模拟，以光作画，以生成式环境音乐回应。单个 HTML 文件，无构建、无依赖、无需 npm install。
 
 **▶ 原项目在线演示：** https://miaai-lab.github.io/Claude-Fable-5.1-Beautiful-HTML/
-**▶ 本 Fork 在线演示：** https://fable.ndjp.net/
 
 ---
 
@@ -239,10 +234,6 @@ git clone https://github.com/MiaAI-Lab/Claude-Fable-5.1-Beautiful-HTML.git
 **中文字体与排印**
 - 新增 `Noto Serif SC / Noto Sans SC`，衬线优先中文，保留 Cormorant Garamond / Inter 做拉丁回退
 - 标题、toast 字间距放大（`.35em / .3em`），更适配中文留白美学
-
-**部署**
-- GitHub Pages（`main` / `/`），自定义域 `fable.ndjp.net`（`CNAME` 文件）
-- 访问：https://fable.ndjp.net/ ，回退：https://bbylw.github.io/fable/
 
 ## 开源协议
 
