@@ -1,6 +1,7 @@
+<a id="en"></a>
 # Synesthesia — Xiaoyao · Chinese Freedom Fork
 
-> **English** | [中文](#-逍遥--自由中文版)
+> **English** | [中文](#zh)
 >
 > This is a Chinese, freedom-themed fork.
 > - **Original repo:** https://github.com/MiaAI-Lab/Claude-Fable-5.1-Beautiful-HTML
@@ -115,9 +116,10 @@ MIT
 
 ---
 
+<a id="zh"></a>
 # 逍遥 · 自由中文版
 
-> [English](#synesthesia--xiaoyao--chinese-freedom-fork) | **中文**
+> [English](#en) | **中文**
 >
 > 本仓库是中文自由主题 Fork，原项目内容完整保留并翻译如下。
 > - **原仓库地址：https://github.com/MiaAI-Lab/Claude-Fable-5.1-Beautiful-HTML**
